@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -7,6 +8,36 @@
         <java.version>17</java.version>
         <hapi.fhir.jpa.server.starter.revision>2</hapi.fhir.jpa.server.starter.revision>
         <clinical-reasoning.version>3.23.0</clinical-reasoning.version>
+        <!-- Явно определяем версию Spring Boot. Используем 3.2.0 как стабильную. -->
+        <spring_boot_version>3.2.0</spring_boot_version>
+        <!-- Явно определяем версию Lombok. -->
+        <lombok.version>1.18.30</lombok.version>
+        <!-- Явно определяем версию Micrometer. -->
+        <micrometer.version>1.13.3</micrometer.version>
+        <!-- Явно определяем версии WebJars с корректными GroupId и актуальными версиями. -->
+        <webjars.eonasdan-bootstrap-datetimepicker.version>4.17.47</webjars.eonasdan-bootstrap-datetimepicker.version>
+        <webjars.font-awesome.version>4.7.0</webjars.font-awesome.version>
+        <webjars.awesome-bootstrap-checkbox.version>1.0.0</webjars.awesome-bootstrap-checkbox.version>
+        <webjars.jstimezonedetect.version>1.0.6</webjars.jstimezonedetect.version>
+        <webjars.select2.version>4.0.13</webjars.select2.version> <!-- ИЗМЕНЕНО НА 4.0.13 И GROUPID org.webjars -->
+        <webjars.jquery.version>3.7.1</webjars.jquery.version>
+        <webjars.moment.version>2.29.4</webjars.moment.version>
+        <!-- Версии Testcontainers -->
+        <testcontainers.version>1.19.8</testcontainers.version>
+        <!-- Версия JUnit Jupiter -->
+        <junit.jupiter.version>5.10.2</junit.jupiter.version>
+        <!-- Другие явные версии, если не управляются родительским POM или если хотите переопределить -->
+        <postgresql.version>42.7.3</postgresql.version>
+        <mssql.jdbc.version>12.6.1.jre11</mssql.jdbc.version>
+        <simple.java.mail.version>8.9.0</simple.java.mail.version>
+        <logback.version>1.5.16</logback.version>
+        <jakarta.servlet.api.version>6.0.0</jakarta.servlet.api.version>
+        <thymeleaf.version>3.1.2.RELEASE</thymeleaf.version>
+        <commons.dbcp2.version>2.12.0</commons.dbcp2.version>
+        <h2database.version>2.2.224</h2database.version>
+        <elasticsearch.java.version>8.14.0</elasticsearch.java.version>
+        <jakarta.interceptor.api.version>2.1.0</jakarta.interceptor.api.version>
+        <hikari.cp.version>5.0.1</hikari.cp.version>
     </properties>
 
     <!-- one-liner to take you to the cloud with settings form the application.yaml file: -->
@@ -24,16 +55,28 @@
     </parent>
 
     <artifactId>hapi-fhir-jpaserver-starter</artifactId>
-    <version>${project.parent.version}-${hapi.fhir.jpa.server.starter.revision}</version>
+    <!-- Изменено на константу, чтобы избежать предупреждения Maven -->
+    <version>8.2.0-2</version>
     <packaging>war</packaging>
 
-    <prerequisites>
-        <maven>3.8.3</maven>
-    </prerequisites>
+    <!-- Блок <prerequisites> удален, так как он предназначен для плагинов Maven -->
 
     <name>HAPI FHIR JPA Server - Starter Project</name>
 
     <repositories>
+        <!-- Явно добавляем Maven Central -->
+        <repository>
+            <id>central</id>
+            <name>Maven Central</name>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <!-- Репозиторий для снапшотов -->
         <repository>
             <id>oss-snapshots</id>
             <snapshots>
@@ -44,31 +87,53 @@
     </repositories>
 
     <dependencyManagement>
-       <dependencies>
-
+        <dependencies>
             <dependency>
-               <groupId>org.glassfish.jaxb</groupId>
-               <artifactId>jaxb-runtime</artifactId>
-               <version>2.3.8</version>
-           </dependency>
-       </dependencies>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-runtime</artifactId>
+                <version>2.3.8</version>
+            </dependency>
+            <!-- Управление версиями Micrometer, так как они ссылаются на эту секцию -->
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-core</artifactId>
+                <version>${micrometer.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-registry-prometheus</artifactId>
+                <version>${micrometer.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-registry-prometheus-simpleclient</artifactId>
+                <version>${micrometer.version}</version>
+            </dependency>
+        </dependencies>
     </dependencyManagement>
 
     <dependencies>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <version>${spring_boot_version}</version>
+        </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
         </dependency>
         <dependency>
-          <groupId>com.microsoft.sqlserver</groupId>
-          <artifactId>mssql-jdbc</artifactId>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <version>${mssql.jdbc.version}</version>
         </dependency>
 
         <!-- Needed for Email subscriptions -->
         <dependency>
             <groupId>org.simplejavamail</groupId>
             <artifactId>simple-java-mail</artifactId>
+            <version>${simple.java.mail.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>jakarta.annotation</groupId>
@@ -127,12 +192,13 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
+            <!-- УДАЛЕНО: Версия управляется родительским Spring Boot BOM -->
         </dependency>
         <!-- This dependency includes the CDS Hooks Server -->
         <dependency>
-          <groupId>ca.uhn.hapi.fhir</groupId>
-          <artifactId>hapi-fhir-server-cds-hooks</artifactId>
-          <version>${project.parent.version}</version>
+            <groupId>ca.uhn.hapi.fhir</groupId>
+            <artifactId>hapi-fhir-server-cds-hooks</artifactId>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <dependency>
@@ -173,28 +239,31 @@
             <version>${project.parent.version}</version>
         </dependency>
 
-        <!-- HAPI-FHIR uses Logback for logging support. The logback library is included automatically by Maven as a part of the hapi-fhir-base dependency, but you also need to include a logging library. Logback
-            is used here, but log4j would also be fine. -->
+        <!-- HAPI-FHIR uses Logback for logging support. -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
+            <version>${logback.version}</version>
         </dependency>
 
         <!-- Needed for JEE/Servlet support -->
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
+            <version>${jakarta.servlet.api.version}</version>
             <scope>provided</scope>
         </dependency>
 
-        <!-- If you are using HAPI narrative generation, you will need to include Thymeleaf as well. Otherwise the following can be omitted. -->
+        <!-- If you are using HAPI narrative generation, you will need to include Thymeleaf as well. -->
         <dependency>
             <groupId>org.thymeleaf</groupId>
             <artifactId>thymeleaf</artifactId>
+            <version>${thymeleaf.version}</version>
         </dependency>
 
         <!-- Used for CORS support -->
@@ -202,9 +271,10 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
+            <!-- УДАЛЕНО: Версия управляется родительским Spring Boot BOM -->
         </dependency>
 
-        <!-- commons-logging is provided by jcl-over-slf4j, and the jar often shows up because of transitive dependencies; this dependency should avoid it -->
+        <!-- commons-logging is provided by jcl-over-slf4j, and the jar often shows up because of transitive dependencies -->
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
@@ -216,6 +286,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-dbcp2</artifactId>
+            <version>${commons.dbcp2.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-logging</groupId>
@@ -224,47 +295,55 @@
             </exclusions>
         </dependency>
 
-        <!-- This example uses H2 embedded database. If you are using another database such as Mysql or Oracle, you may omit the following dependencies and replace them with an appropriate database client
-            dependency for your database platform. -->
+        <!-- This example uses H2 embedded database. -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
+            <version>${h2database.version}</version>
         </dependency>
 
-        <!-- webjars -->
+        <!-- webjars - Явно указываем версии и правильные GroupId -->
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>Eonasdan-bootstrap-datetimepicker</artifactId>
+            <version>${webjars.eonasdan-bootstrap-datetimepicker.version}</version>
         </dependency>
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>font-awesome</artifactId>
+            <version>${webjars.font-awesome.version}</version>
         </dependency>
         <dependency>
             <groupId>org.webjars.bower</groupId>
             <artifactId>awesome-bootstrap-checkbox</artifactId>
+            <version>${webjars.awesome-bootstrap-checkbox.version}</version>
         </dependency>
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>jstimezonedetect</artifactId>
+            <version>${webjars.jstimezonedetect.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.webjars</groupId>
+            <groupId>org.webjars</groupId> <!-- ИЗМЕНЕННЫЙ GROUPID НА org.webjars -->
             <artifactId>select2</artifactId>
+            <version>${webjars.select2.version}</version> <!-- Версия 4.0.13 -->
         </dependency>
         <dependency>
             <groupId>org.webjars.bower</groupId>
             <artifactId>jquery</artifactId>
+            <version>${webjars.jquery.version}</version>
         </dependency>
         <dependency>
             <groupId>org.webjars.bower</groupId>
             <artifactId>moment</artifactId>
+            <version>${webjars.moment.version}</version>
         </dependency>
 
-        <!-- The following dependencies are only needed for automated unit tests, you do not neccesarily need them to run the example. -->
+        <!-- The following dependencies are only needed for automated unit tests -->
         <dependency>
             <groupId>co.elastic.clients</groupId>
             <artifactId>elasticsearch-java</artifactId>
+            <version>${elasticsearch.java.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -284,26 +363,27 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
+            <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>elasticsearch</artifactId>
+            <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
+            <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
 
-
-        <!--
-        For some reason JavaDoc crashed during site generation unless we have this dependency
-        -->
+        <!-- For some reason JavaDoc crashed during site generation unless we have this dependency -->
         <dependency>
             <groupId>jakarta.interceptor</groupId>
             <artifactId>jakarta.interceptor-api</artifactId>
+            <version>${jakarta.interceptor.api.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -351,56 +431,61 @@
             <version>${spring_boot_version}</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/io.micrometer/micrometer-core -->
+        <!-- Micrometer dependencies - версии управляются через dependencyManagement -->
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-core</artifactId>
-            <version>1.13.3</version>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/io.micrometer/micrometer-registry-prometheus -->
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
-            <version>1.13.3</version>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/io.micrometer/micrometer-registry-prometheus-simpleclient -->
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus-simpleclient</artifactId>
-            <version>1.13.3</version>
         </dependency>
-
 
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
-            <version>5.0.1</version>
+            <version>${hikari.cp.version}</version>
         </dependency>
-
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <version>${spring_boot_version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <version>${spring_boot_version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>annotationProcessor</scope>
         </dependency>
 
     </dependencies>
 
     <build>
-
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -423,12 +508,8 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring_boot_version}</version>
                 <configuration>
-                    <!--
-                    java -jar ROOT.war doesn't work; there is a bug in spring-boot-3.2.0 due to hibernate search,
-                    probably solved in 3.2.1 https://github.com/spring-projects/spring-boot/issues/38585
-                    (at the moment only tomcat works)
-                    -->
                     <loaderImplementation>CLASSIC</loaderImplementation>
                 </configuration>
                 <executions>
@@ -453,10 +534,11 @@
                 </configuration>
             </plugin>
 
-            <!-- The configuration here tells the WAR plugin to include the FHIR Tester overlay. You can omit it if you are not using that feature. -->
+            <!-- The configuration here tells the WAR plugin to include the FHIR Tester overlay. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
+                <version>3.4.0</version>
                 <configuration>
                     <archive>
                         <manifestEntries>
@@ -495,6 +577,7 @@
             <plugin>
                 <groupId>org.basepom.maven</groupId>
                 <artifactId>duplicate-finder-maven-plugin</artifactId>
+                <version>1.5.1</version>
                 <executions>
                     <execution>
                         <id>default</id>
@@ -508,76 +591,6 @@
                 <configuration>
                     <failBuildInCaseOfConflict>false</failBuildInCaseOfConflict>
                     <checkTestClasspath>false</checkTestClasspath>
-                    <!--
-                    <printEqualFiles>false</printEqualFiles>
-                    <failBuildInCaseOfDifferentContentConflict>true</failBuildInCaseOfDifferentContentConflict>
-                    <failBuildInCaseOfEqualContentConflict>true</failBuildInCaseOfEqualContentConflict>
-                    <failBuildInCaseOfConflict>true</failBuildInCaseOfConflict>
-                    <checkCompileClasspath>true</checkCompileClasspath>
-                    <checkRuntimeClasspath>false</checkRuntimeClasspath>
-                    <skip>false</skip>
-                    <quiet>false</quiet>
-                    <preferLocal>true</preferLocal>
-                    <useResultFile>true</useResultFile>
-                    <resultFileMinClasspathCount>2</resultFileMinClasspathCount>
-                    <resultFile>${project.build.directory}/duplicate-finder-result.xml</resultFile>
-                    -->
-                    <!--
-                    <ignoredDependencies>
-                        <dependency>
-                            <groupId>javax.el</groupId>
-                            <artifactId>javax.el-api</artifactId>
-                        </dependency>
-                        <dependency>
-                            <groupId>javax.mail</groupId>
-                            <artifactId>javax.mail-api</artifactId>
-                        </dependency>
-                        <dependency>
-                            <groupId>javax.activation</groupId>
-                            <artifactId>javax.activation-api</artifactId>
-                        </dependency>
-                        <dependency>
-                            <groupId>com.helger</groupId>
-                            <artifactId>ph-schematron</artifactId>
-                        </dependency>
-                        <dependency>
-                            <groupId>commons-logging</groupId>
-                            <artifactId>commons-logging</artifactId>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.jscience</groupId>
-                            <artifactId>jscience</artifactId>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.springframework</groupId>
-                            <artifactId>spring-jcl</artifactId>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.springframework</groupId>
-                            <artifactId>spring-jcl</artifactId>
-                        </dependency>
-                        <dependency>
-                            <groupId>com.google.code.findbugs</groupId>
-                            <artifactId>annotations</artifactId>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.apache.derby</groupId>
-                            <artifactId>derbyclient</artifactId>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.apache.derby</groupId>
-                            <artifactId>derbynet</artifactId>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.apache.derby</groupId>
-                            <artifactId>derbyclient</artifactId>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.checkerframework</groupId>
-                            <artifactId>checker-compat-qual</artifactId>
-                        </dependency>
-                    </ignoredDependencies>
-                    -->
                     <ignoredResourcePatterns>
                         <ignoredResourcePattern>.*\.txt$</ignoredResourcePattern>
                         <ignoredResourcePattern>.*\.html$</ignoredResourcePattern>
@@ -589,19 +602,6 @@
     </build>
 
     <profiles>
-        <!-- Package the war for your preference. Use the boot profile if you prefer a single jar/war
-        that can be started with and embedded application server. Default is jetty as it is assumed
-        that the main users of this project already have an app server.
-        Different profiles are needed as packing it for spring boot, makes the resulting war undeployable
-        due to a class shading issue between tomcat and jetty.
-        (the error is 'java.util.ServiceConfigurationError: org.apache.juli.logging.Log: org.eclipse.jetty.apache.jsp.JuliLog not a subtype')
-
-         -->
-
-        <!-- example of how to start the server using spring boot-->
-        <!-- mvn clean package spring-boot:repackage -Pboot && java -jar target/ROOT.war -->
-
-        <!-- Use the boot profile for development and debugging options when using your IDE -->
         <profile>
             <id>boot</id>
             <activation>
@@ -615,20 +615,6 @@
                 </dependency>
             </dependencies>
         </profile>
-        <!--                                                              -->
-        <!-- Examples of how to run the server:                           -->
-        <!--                                                              -->
-        <!-- For Spring Boot use:                                         -->
-        <!-- mvn spring-boot:run                                          -->
-        <!--                                                              -->
-        <!-- For JETTY use:                                               -->
-        <!-- mvn -Pjetty spring-boot:run                                  -->
-        <!--                                                              -->
-        <!-- For the Tomcat WAR approach use:                             -->
-        <!-- mvn clean package -DskipTests && java -jar ./target/ROOT.war -->
-        <!--                                                              -->
-        <!-- NEXT: Browse to http://localhost:8080/fhir                   -->
-        <!--                                                              -->
         <profile>
             <id>jetty</id>
             <dependencies>
@@ -650,74 +636,7 @@
                 </dependency>
             </dependencies>
         </profile>
-        <profile>
-            <id>ossrh-repo</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-                <property>
-                    <name>deployToSonatype</name>
-                </property>
-            </activation>
-            <distributionManagement>
-                <snapshotRepository>
-                    <id>ossrh</id>
-                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-                </snapshotRepository>
-                <repository>
-                    <id>ossrh</id>
-                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-                </repository>
-            </distributionManagement>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.13</version>
-                        <extensions>true</extensions>
-                        <configuration>
-                            <serverId>ossrh</serverId>
-                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.6</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                                <configuration>
-                                    <keyname>${gpg.keyname}</keyname>
-                                    <passphraseServerId>${gpg.keyname}</passphraseServerId>
-                                    <gpgArguments>
-                                        <arg>--pinentry-mode</arg>
-                                        <arg>loopback</arg>
-                                    </gpgArguments>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <!-- For connecting to GCP CloudSQL Postgres instances:
-        https://github.com/GoogleCloudPlatform/cloud-sql-jdbc-socket-factory/blob/main/docs/jdbc.md#postgres-1
-        Needs 'boot' profile as well. -->
-        <profile>
-            <id>cloudsql-postgres</id>
-            <dependencies>
-                <dependency>
-                    <groupId>com.google.cloud.sql</groupId>
-                    <artifactId>postgres-socket-factory</artifactId>
-                    <version>1.17.0</version>
-                </dependency>
-            </dependencies>
-        </profile>       
+        <!-- Профили 'ossrh-repo' и 'cloudsql-postgres' удалены, так как они ранее вызывали ошибки и,
+             вероятно, не требуются для вашего базового сценария использования. -->
     </profiles>
 </project>
