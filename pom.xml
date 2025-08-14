@@ -531,6 +531,7 @@
                 <version>3.13.0</version>
                 <configuration>
                     <release>${java.version}</release>
+                    <parameters>true</parameters> <!-- ДОБАВЬТЕ ЭТУ СТРОКУ -->
                 </configuration>
             </plugin>
 
