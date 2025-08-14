@@ -1,31 +1,25 @@
 package ca.uhn.fhir.jpa.starter.custom;
 
+import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class LoincService {
-	private final Logger logger = LoggerFactory.getLogger(getClass());
-	private LoincRepository loincRepository;
+	private final LoincRepository loincRepository;
+
 	public LoincService(LoincRepository loincRepository) {
 		this.loincRepository = loincRepository;
 	}
 
-	public String testDB() {
-		if (loincRepository.findByCode("15074-9").isPresent()) {
-			logger.info("Loinc already exists");
-			return "Loinc already exists";
+	public void validate(String code) throws LoincValidationException {
+		if (code == null || code.isBlank()) {
+			throw new LoincValidationException("LOINC code cannot be empty", code);
 		}
-		logger.info("invalid loinc code");
-		return "Invalid Loinc code";
-	};
 
-	public void validate(String code) {
 		if (loincRepository.findByCode(code).isEmpty()) {
-			logger.info("Loinc code not found");
-			throw new LoincValidationException("Invalid Loinc Code " + code, code);
+			throw new LoincValidationException("LOINC code not found: " + code,code);
 		}
-		logger.info("Valid Loinc code");
 	}
 }

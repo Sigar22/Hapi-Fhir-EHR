@@ -16,7 +16,6 @@ public class CustomController {
 	@GetMapping("/test")
 	public String test() {
 		logger.info("Test endpoint called");
-		loincService.testDB();
 		return "Hello";
 	}
 }
